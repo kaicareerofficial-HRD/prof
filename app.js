@@ -2,6 +2,9 @@
 const $ = id => document.getElementById(id);
 const KEY = 'speaker-archive-v1.0';
 const seed = Array.isArray(window.SPEAKERS) ? window.SPEAKERS : [];
+const grades = ['S','A','B','C'];
+const gradeOf = review => review.grade || ({'5':'S','4':'A','3':'B','2':'C','1':'C'})[review.score];
+const lectureDate = review => review.lectureDate ?? '';
 const tabs = ['프로필', '강의 이력', '강의 평가'];
 const normalize = value => String(value ?? '').normalize('NFKC').toLowerCase().replace(/\s/g, '');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
@@ -22,7 +25,7 @@ function valid(rows) {
     ['topics','career'].every(k=>Array.isArray(r[k]) && r[k].every(x=>typeof x==='string')) &&
     Array.isArray(r.events) && Array.isArray(r.reviews) &&
     r.events.every(e=>e && strings(e,['id','date','title','place','host','source'])) &&
-    r.reviews.every(e=>e && strings(e,['id','date','title','score','note']) && /^[1-5]$/.test(e.score)));
+    r.reviews.every(e=>e && strings(e,['id','date','title','note']) && grades.includes(gradeOf(e)) && (e.lectureDate===undefined || typeof e.lectureDate==='string')));
 }
 let changed = [];
 try { const local = JSON.parse(localStorage.getItem(KEY)); if(valid(local)) changed = local; } catch {}
@@ -73,9 +76,35 @@ function records(items, kind, preview=false) {
   if(!items.length) return empty(kind==='event'?'등록된 강의 이력이 없습니다.':'등록된 평가가 없습니다.');
   return items.map(e=>'<div class="record"><div class="sectionhead"><strong>'+esc(e.title)+'</strong>'+
     (preview?'':'<button data-action="'+kind+'" data-id="'+esc(e.id)+'">수정</button>')+'</div><p>'+
-    esc(kind==='event'?[e.date||'일자 미확인',e.place||'장소 미확인',e.host,e.status,e.published && '후기 게시 '+e.published].filter(Boolean).join(' · '):e.date+' · '+e.score+'/5점')+'</p>'+
+    esc(kind==='event'?[e.date||'일자 미확인',e.place||'장소 미확인',e.host,e.status,e.published && '후기 게시 '+e.published].filter(Boolean).join(' · '):'평가일 '+(e.date||'미확인')+' · '+gradeOf(e)+'등급')+'</p>'+
     (kind==='event'?link(e.source,'강의 출처 ↗'):(e.note?'<p>'+esc(e.note)+'</p>':''))+'</div>').join('');
 }
+function evaluationGroups(reviews) {
+  const groups = new Map();
+  for(const review of reviews){
+    const date=lectureDate(review);
+    const key=JSON.stringify([normalize(review.title),date]);
+    if(!groups.has(key))groups.set(key,{title:review.title,date,reviews:[]});
+    groups.get(key).reviews.push(review);
+  }
+  return [...groups.values()].sort((a,b)=>b.date.localeCompare(a.date));
+}
+function gradeCounts(reviews) {
+  return grades.map(grade=>[grade,reviews.filter(r=>gradeOf(r)===grade).length])
+    .filter(([,count])=>count).map(([grade,count])=>grade+' '+count+'건').join(' · ');
+}
+function evaluationSummary(events,reviews) {
+  const latest=events.filter(e=>e.date && e.date<=todayKorea()).concat(
+    reviews.filter(r=>lectureDate(r)).map(r=>({date:lectureDate(r),title:r.title}))).sort(dateSort)[0] || events.find(e=>!e.date);
+  const recentReview=reviews.filter(r=>lectureDate(r)).sort((a,b)=>lectureDate(b).localeCompare(lectureDate(a)) || dateSort(a,b))[0] || reviews[0];
+  const round=recentReview && reviews.filter(r=>normalize(r.title)===normalize(recentReview.title) && lectureDate(r)===lectureDate(recentReview));
+  const rating=round?.length>1 ? gradeCounts(round) : recentReview ? gradeOf(recentReview)+'등급' : '평가 없음';
+  return '<div class="profile-rating"><span>강사 평가</span>'+
+    '<button type="button" data-tab="2" class="rating-value">'+esc(rating)+'</button>'+
+    (recentReview?'<small>최근 평가 강의 · '+esc(recentReview.title)+'</small>':'')+
+    '<div class="recent-program"><small>최근 강의 · '+esc(latest?.date || '날짜 미확인')+'</small><small>'+esc(latest?.title || '등록된 강의 프로그램 없음')+'</small></div></div>';
+}
+const todayKorea = () => new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date());
 function drawDetail() {
   const x=all().find(r=>r.id===selected);
   if(!x) { $('detail').innerHTML=empty('강사를 선택하거나 새로 등록하세요.'); return; }
@@ -83,11 +112,12 @@ function drawDetail() {
   const overview='<div class="overview">'+box('주요 이력',x.career)+box('강의 주제',x.topics)+'</div><section><div class="sectionhead"><h3>최근 강의 이력</h3><button data-tab="1">전체 이력 보기</button></div><div style="margin-top:9px">'+records(events.slice(0,3),'event',true)+'</div></section>'+
     (x.source?'<div class="source">'+link(x.source,'공개 프로필 및 사진 출처 ↗')+(x.yearSource?' · '+link(x.yearSource,'출생연도 출처 ↗'):'')+'</div>':'');
   const history='<div class="sectionhead"><h3>강의 이력 '+events.length+'건</h3><button data-action="event">＋ 이력 등록</button></div><div>'+records(events,'event')+'</div>';
-  const avg=reviews.length?' · 평균 '+(reviews.reduce((n,r)=>n+Number(r.score),0)/reviews.length).toFixed(1)+'/5':'';
-  const evaluations='<div class="sectionhead"><h3>강의 평가 '+reviews.length+'건'+avg+'</h3><button data-action="review">＋ 평가 등록</button></div><div>'+records(reviews,'review')+'</div>';
+  const groups=evaluationGroups(reviews);
+  const evaluations='<div class="sectionhead"><h3>강의 평가 '+reviews.length+'건</h3><button data-action="review">＋ 평가 등록</button></div>'+
+    (groups.length?groups.map(g=>'<section class="box review-group"><h3>'+esc(g.title)+' · '+esc(g.date||'강의 날짜 미확인')+'</h3><p class="rating-counts">'+esc(gradeCounts(g.reviews))+'</p>'+records(g.reviews,'review')+'</section>').join(''):empty('등록된 평가가 없습니다.'));
   $('detail').innerHTML='<div class="profile"><div class="portrait"><span aria-hidden="true">'+esc(x.name[0])+'</span>'+
     (photoURL(x.photo)?'<img referrerpolicy="no-referrer" src="'+esc(photoURL(x.photo))+'" alt="'+esc(x.name)+' 사진">':'')+
-    '</div><div class="profile-text">'+(x.category?'<span class="tag">'+esc(x.category)+'</span>':'')+'<h2>'+esc(x.name)+'</h2><p>'+esc(x.role)+'</p><p class="meta">'+esc(x.year?x.year+'년생':'출생연도 미확인')+'</p></div><button data-action="person">프로필 수정</button></div>'+
+    '</div><div class="profile-text">'+(x.category?'<span class="tag">'+esc(x.category)+'</span>':'')+'<h2>'+esc(x.name)+'</h2><p>'+esc(x.role)+'</p><p class="meta">'+esc(x.year?x.year+'년생':'출생연도 미확인')+'</p><button data-action="person">프로필 수정</button></div>'+evaluationSummary(events,reviews)+'</div>'+
     '<div class="tabs" role="tablist" aria-label="강사 정보">'+tabs.map((t,i)=>'<button id="tab-'+i+'" role="tab" aria-controls="panel" aria-selected="'+(tab===i)+'" data-tab="'+i+'">'+t+'</button>').join('')+'</div>'+
     '<div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-'+tab+'">'+[overview,history,evaluations][tab]+'</div>';
   $('detail').querySelector('img')?.addEventListener('error',e=>e.currentTarget.remove());
@@ -120,22 +150,33 @@ $('detail').addEventListener('click',e=>{
 const forms = {
   person:[['name','이름','text',1],['role','소속·직함','text',1],['year','출생연도','year'],['yearSource','출생연도 출처 URL','url'],['category','분야','text'],['photo','사진 URL','url'],['source','프로필 출처 URL','url'],['career','주요 이력 (한 줄에 한 건)','textarea'],['topics','강의 주제 (한 줄에 한 건)','textarea']],
   event:[['title','강의 주제','text',1],['date','강의 날짜','date'],['place','강의 장소','text'],['host','주최 기관','text'],['status','확인 상태','text'],['published','후기 게시일','date'],['source','출처 URL','url']],
-  review:[['title','강의 주제','text',1],['date','평가 날짜','date',1],['score','만족도 (1~5점)','score',1],['note','평가 의견','textarea']]
+  review:[['title','강의 주제','text',1],['lectureDate','강의 날짜','date',1],['date','평가 날짜','date',1],['grade','평가 등급','grade',1],['note','평가 의견','textarea']]
 };
 function field([name,label,type,required],data,events) {
   const value=Array.isArray(data[name])?data[name].join('\n'):(data[name]??'');
   const attr=' name="'+name+'" '+(required?'required':'');
   let control='<input'+attr+' type="'+(type==='year'?'text':type)+'" '+(type==='year'?'inputmode="numeric" pattern="[0-9]{4}"':'')+' value="'+esc(value)+'">';
   if(type==='textarea') control='<textarea'+attr+'>'+esc(value)+'</textarea>';
-  if(type==='score') control='<select'+attr+'>'+[1,2,3,4,5].map(s=>'<option '+(String(s)===String(value||5)?'selected':'')+'>'+s+'</option>').join('')+'</select>';
+  if(type==='grade') control='<select'+attr+'><option value="">등급 선택</option>'+grades.map(g=>'<option '+(g===value?'selected':'')+'>'+g+'</option>').join('')+'</select>';
   if(events?.length && name==='title') control='<input'+attr+' list="event-titles" value="'+esc(value)+'"><datalist id="event-titles">'+events.map(e=>'<option value="'+esc(e.title)+'">').join('')+'</datalist>';
   return '<label>'+label+control+'</label>';
 }
 function openForm(kind,row,id,draft={}) {
   editor={kind,row,id,photo:photoURL((row||draft).photo)?.startsWith('data:')?(row||draft).photo:''};
-  const data=kind==='person'?(row||draft):((kind==='event'?row.events:row.reviews).find(x=>x.id===id)||{});
+  let data=kind==='person'?(row||draft):((kind==='event'?row.events:row.reviews).find(x=>x.id===id)||{});
+  if(kind==='review')data={...data,date:data.date||todayKorea(),grade:gradeOf(data)||''};
   $('dialog-title').textContent=({person:'강사',event:'강의 이력',review:'강의 평가'})[kind]+(id || (row&&kind==='person')?' 수정':' 등록');
   $('fields').innerHTML=forms[kind].map(f=>field(f,data,kind==='review'?row.events:null)).join('');
+  if(kind==='review' && row.events.some(e=>e.date)){
+    const dated=row.events.filter(e=>e.date).sort(dateSort);
+    $('fields').insertAdjacentHTML('afterbegin','<label>등록된 강의 선택<select id="review-event"><option value="">직접 입력</option>'+dated.map((e,i)=>'<option value="'+i+'">'+esc(e.date+' · '+e.title)+'</option>').join('')+'</select></label>');
+    $('review-event').onchange=e=>{
+      if(!e.target.value)return;
+      const event=dated[Number(e.target.value)];
+      $('editor').elements.title.value=event.title;
+      $('editor').elements.lectureDate.value=event.date;
+    };
+  }
   if(kind==='person'){
     const photoInput=$('fields').querySelector('[name="photo"]');
     if(editor.photo) photoInput.value='';
@@ -156,6 +197,8 @@ $('editor').addEventListener('submit',e=>{
   const err=message=>{$('form-error').textContent=message;};
   if(!data.title && kind!=='person') return err('강의 주제를 입력하세요.');
   if(Object.keys(data).filter(k=>['photo','source','yearSource'].includes(k)).some(k=>data[k]&&!url(data[k])))return err('웹 주소는 https:// 또는 http://로 입력하세요.');
+  if(kind==='review' && (!grades.includes(data.grade) || !data.lectureDate || data.lectureDate>data.date))
+    return err('평가 등급과 강의 날짜를 확인하세요. 평가 날짜는 강의 날짜 이후여야 합니다.');
   let next;
   if(kind==='person'){
     if(!data.name||!data.role) return err('이름과 소속·직함을 입력하세요.');
