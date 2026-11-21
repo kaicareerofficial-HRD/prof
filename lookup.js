@@ -35,7 +35,7 @@ async function searchPeople(name,topic) {
     const role=safeText(entity.descriptions?.ko?.value);
     const summary=safeText(p.extract).slice(0,480);
     return [{name:wikiTitle(p.title),label:p.title,role,year,yearSource:year?'https://www.wikidata.org/wiki/'+id:'',photo:p.thumbnail?.source||'',source:p.fullurl||'',career:[],topics:[],summary,
-      keyword:topic && normalize([p.title,role,summary].join(' ')).includes(normalize(topic)),kind:'한국어 위키백과 · 위키데이터'}];
+      keyword:topic ? normalize([p.title,role,summary].join(' ')).includes(normalize(topic)) : undefined,kind:'한국어 위키백과 · 위키데이터'}];
   });
 }
 function external(name,topic) {
