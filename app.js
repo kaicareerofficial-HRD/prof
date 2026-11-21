@@ -1,0 +1,195 @@
+'use strict';
+const $ = id => document.getElementById(id);
+const KEY = 'speaker-archive-v1.0';
+const seed = Array.isArray(window.SPEAKERS) ? window.SPEAKERS : [];
+const tabs = ['프로필', '강의 이력', '강의 평가'];
+const normalize = value => String(value ?? '').normalize('NFKC').toLowerCase().replace(/\s/g, '');
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+const sorted = rows => [...rows].sort((a,b) => a.name.localeCompare(b.name,'ko') || a.role.localeCompare(b.role,'ko'));
+const uid = () => globalThis.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
+function url(value) {
+  try { const u = new URL(value); return ['https:','http:'].includes(u.protocol) ? u.href : ''; }
+  catch { return ''; }
+}
+const photoURL = value => /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(value || '') && value.length <= 600000 ? value : url(value);
+function link(value, label) {
+  return url(value) ? '<a href="'+esc(url(value))+'" target="_blank" rel="noopener noreferrer">'+esc(label)+'</a>' : '';
+}
+function strings(row, keys) { return keys.every(key => typeof row[key] === 'string'); }
+function valid(rows) {
+  return Array.isArray(rows) && new Set(rows.map(r=>r?.id)).size === rows.length && rows.every(r =>
+    r && strings(r,['id','name','role','category','year','photo','source']) && r.id && r.name.trim() &&
+    ['topics','career'].every(k=>Array.isArray(r[k]) && r[k].every(x=>typeof x==='string')) &&
+    Array.isArray(r.events) && Array.isArray(r.reviews) &&
+    r.events.every(e=>e && strings(e,['id','date','title','place','host','source'])) &&
+    r.reviews.every(e=>e && strings(e,['id','date','title','score','note']) && /^[1-5]$/.test(e.score)));
+}
+let changed = [];
+try { const local = JSON.parse(localStorage.getItem(KEY)); if(valid(local)) changed = local; } catch {}
+const all = () => sorted([...new Map([...seed,...changed].map(row=>[row.id,row])).values()]);
+let selected = seed.find(r=>r.name==='김경일')?.id || all()[0]?.id;
+let tab = 0, active = -1, matches = [], editor = null, toastTimer;
+const search = $('search');
+function toast(message) {
+  $('status').textContent = message; $('status').hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>$('status').hidden=true,3200);
+}
+function persist(rows) { localStorage.setItem(KEY,JSON.stringify(rows)); changed = rows; }
+function save(row) { persist([...changed.filter(r=>r.id!==row.id),row]); }
+function categories() {
+  const current = $('category').value;
+  const names = [...new Set(all().map(x=>x.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
+  $('category').innerHTML = '<option value="">모든 분야</option>'+names.map(n=>'<option>'+esc(n)+'</option>').join('');
+  if(names.includes(current)) $('category').value=current;
+}
+function filtered() {
+  const category = $('category').value, terms = search.value.trim().split(/\s+/).map(normalize);
+  return all().filter(x=>(!category || x.category===category) && terms.every(term =>
+    normalize([x.name,x.role,x.year,x.category,...x.topics,...x.career,...x.events.map(e=>e.title+' '+e.place+' '+e.host)].join(' ')).includes(term)));
+}
+function personText(x) { return '<strong>'+esc(x.name)+'</strong><small>'+esc([x.role,x.year && x.year+'년생'].filter(Boolean).join(' · ')||'소속 미입력')+'</small>'; }
+function drawList() {
+  const rows=filtered();
+  $('count').textContent=rows.length+'명 / 전체 '+all().length+'명';
+  $('list').innerHTML=rows.map(x=>'<button class="person" data-person="'+esc(x.id)+'" aria-current="'+(x.id===selected)+'"><span class="initial" aria-hidden="true">'+esc(x.name[0])+'</span><span>'+personText(x)+'</span></button>').join('') || '<p class="empty">조건에 맞는 강사가 없습니다.</p>';
+}
+function suggest(show) {
+  matches = show && search.value.trim() ? filtered().slice(0,7) : [];
+  $('suggest').hidden = !matches.length;
+  search.setAttribute('aria-expanded',String(Boolean(matches.length)));
+  $('suggest').innerHTML=matches.map((x,i)=>'<div class="suggestion" style="padding:8px;cursor:pointer" id="suggest-'+i+'" role="option" aria-selected="'+(i===active)+'" data-person="'+esc(x.id)+'">'+personText(x)+'</div>').join('');
+  if(active>=0 && matches[active]) search.setAttribute('aria-activedescendant','suggest-'+active);
+  else search.removeAttribute('aria-activedescendant');
+}
+function choose(id) {
+  selected=id; tab=0; active=-1; suggest(false); drawList(); drawDetail();
+  if(matchMedia('(max-width:650px)').matches) $('detail').scrollIntoView({block:'start'});
+}
+const empty = message => '<p class="empty">'+esc(message)+'</p>';
+const box = (title,items) => '<section class="box"><h3>'+title+'</h3>'+(items.length?'<ul>'+items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':empty('등록된 정보가 없습니다.'))+'</section>';
+const dateSort = (a,b) => (b.date || b.published || '').localeCompare(a.date || a.published || '');
+function records(items, kind, preview=false) {
+  if(!items.length) return empty(kind==='event'?'등록된 강의 이력이 없습니다.':'등록된 평가가 없습니다.');
+  return items.map(e=>'<div class="record"><div class="sectionhead"><strong>'+esc(e.title)+'</strong>'+
+    (preview?'':'<button data-action="'+kind+'" data-id="'+esc(e.id)+'">수정</button>')+'</div><p>'+
+    esc(kind==='event'?[e.date||'일자 미확인',e.place||'장소 미확인',e.host,e.status,e.published && '후기 게시 '+e.published].filter(Boolean).join(' · '):e.date+' · '+e.score+'/5점')+'</p>'+
+    (kind==='event'?link(e.source,'강의 출처 ↗'):(e.note?'<p>'+esc(e.note)+'</p>':''))+'</div>').join('');
+}
+function drawDetail() {
+  const x=all().find(r=>r.id===selected);
+  if(!x) { $('detail').innerHTML=empty('강사를 선택하거나 새로 등록하세요.'); return; }
+  const events=[...x.events].sort(dateSort), reviews=[...x.reviews].sort(dateSort);
+  const overview='<div class="overview">'+box('주요 이력',x.career)+box('강의 주제',x.topics)+'</div><section><div class="sectionhead"><h3>최근 강의 이력</h3><button data-tab="1">전체 이력 보기</button></div><div style="margin-top:9px">'+records(events.slice(0,3),'event',true)+'</div></section>'+
+    (x.source?'<div class="source">'+link(x.source,'공개 프로필 및 사진 출처 ↗')+(x.yearSource?' · '+link(x.yearSource,'출생연도 출처 ↗'):'')+'</div>':'');
+  const history='<div class="sectionhead"><h3>강의 이력 '+events.length+'건</h3><button data-action="event">＋ 이력 등록</button></div><div>'+records(events,'event')+'</div>';
+  const avg=reviews.length?' · 평균 '+(reviews.reduce((n,r)=>n+Number(r.score),0)/reviews.length).toFixed(1)+'/5':'';
+  const evaluations='<div class="sectionhead"><h3>강의 평가 '+reviews.length+'건'+avg+'</h3><button data-action="review">＋ 평가 등록</button></div><div>'+records(reviews,'review')+'</div>';
+  $('detail').innerHTML='<div class="profile"><div class="portrait"><span aria-hidden="true">'+esc(x.name[0])+'</span>'+
+    (photoURL(x.photo)?'<img referrerpolicy="no-referrer" src="'+esc(photoURL(x.photo))+'" alt="'+esc(x.name)+' 사진">':'')+
+    '</div><div class="profile-text">'+(x.category?'<span class="tag">'+esc(x.category)+'</span>':'')+'<h2>'+esc(x.name)+'</h2><p>'+esc(x.role)+'</p><p class="meta">'+esc(x.year?x.year+'년생':'출생연도 미확인')+'</p></div><button data-action="person">프로필 수정</button></div>'+
+    '<div class="tabs" role="tablist" aria-label="강사 정보">'+tabs.map((t,i)=>'<button id="tab-'+i+'" role="tab" aria-controls="panel" aria-selected="'+(tab===i)+'" data-tab="'+i+'">'+t+'</button>').join('')+'</div>'+
+    '<div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-'+tab+'">'+[overview,history,evaluations][tab]+'</div>';
+  $('detail').querySelector('img')?.addEventListener('error',e=>e.currentTarget.remove());
+}
+search.addEventListener('input',()=>{active=-1;drawList();suggest(true);});
+search.addEventListener('focus',()=>suggest(true));
+search.addEventListener('keydown',e=>{
+  if(e.isComposing) return;
+  if(e.key==='Escape'){active=-1;suggest(false);return;}
+  if(!['ArrowDown','ArrowUp','Enter'].includes(e.key)) return;
+  if(!matches.length && e.key!=='Enter') suggest(true);
+  if(e.key==='Enter' && matches[active]){e.preventDefault();choose(matches[active].id);return;}
+  if(e.key==='Enter' || !matches.length) return;
+  e.preventDefault();
+  active=active<0?(e.key==='ArrowDown'?0:matches.length-1):(active+(e.key==='ArrowDown'?1:matches.length-1))%matches.length;
+  suggest(true);
+});
+$('category').addEventListener('change',()=>{active=-1;suggest(false);drawList();});
+document.addEventListener('click',e=>{
+  const person=e.target.closest('[data-person]');
+  if(person) choose(person.dataset.person);
+  else if(!e.target.closest('.searchbox')) {active=-1;suggest(false);}
+});
+$('detail').addEventListener('click',e=>{
+  const tabButton=e.target.closest('[data-tab]');
+  if(tabButton){tab=Number(tabButton.dataset.tab);drawDetail();$('tab-'+tab)?.focus();}
+  const action=e.target.closest('[data-action]');
+  if(action) openForm(action.dataset.action,all().find(r=>r.id===selected),action.dataset.id);
+});
+const forms = {
+  person:[['name','이름','text',1],['role','소속·직함','text',1],['year','출생연도','year'],['yearSource','출생연도 출처 URL','url'],['category','분야','text'],['photo','사진 URL','url'],['source','프로필 출처 URL','url'],['career','주요 이력 (한 줄에 한 건)','textarea'],['topics','강의 주제 (한 줄에 한 건)','textarea']],
+  event:[['title','강의 주제','text',1],['date','강의 날짜','date'],['place','강의 장소','text'],['host','주최 기관','text'],['status','확인 상태','text'],['published','후기 게시일','date'],['source','출처 URL','url']],
+  review:[['title','강의 주제','text',1],['date','평가 날짜','date',1],['score','만족도 (1~5점)','score',1],['note','평가 의견','textarea']]
+};
+function field([name,label,type,required],data,events) {
+  const value=Array.isArray(data[name])?data[name].join('\n'):(data[name]??'');
+  const attr=' name="'+name+'" '+(required?'required':'');
+  let control='<input'+attr+' type="'+(type==='year'?'text':type)+'" '+(type==='year'?'inputmode="numeric" pattern="[0-9]{4}"':'')+' value="'+esc(value)+'">';
+  if(type==='textarea') control='<textarea'+attr+'>'+esc(value)+'</textarea>';
+  if(type==='score') control='<select'+attr+'>'+[1,2,3,4,5].map(s=>'<option '+(String(s)===String(value||5)?'selected':'')+'>'+s+'</option>').join('')+'</select>';
+  if(events?.length && name==='title') control='<input'+attr+' list="event-titles" value="'+esc(value)+'"><datalist id="event-titles">'+events.map(e=>'<option value="'+esc(e.title)+'">').join('')+'</datalist>';
+  return '<label>'+label+control+'</label>';
+}
+function openForm(kind,row,id,draft={}) {
+  editor={kind,row,id,photo:photoURL((row||draft).photo)?.startsWith('data:')?(row||draft).photo:''};
+  const data=kind==='person'?(row||draft):((kind==='event'?row.events:row.reviews).find(x=>x.id===id)||{});
+  $('dialog-title').textContent=({person:'강사',event:'강의 이력',review:'강의 평가'})[kind]+(id || (row&&kind==='person')?' 수정':' 등록');
+  $('fields').innerHTML=forms[kind].map(f=>field(f,data,kind==='review'?row.events:null)).join('');
+  if(kind==='person'){
+    const photoInput=$('fields').querySelector('[name="photo"]');
+    if(editor.photo) photoInput.value='';
+    window.attachSpeakerPhotos?.($('fields'),editor,photoInput);
+    if(draft.webCandidate){
+      $('fields').insertAdjacentHTML('beforeend','<label class="photo-check"><input type="checkbox" required> 출처를 대조해 선택한 강사와 같은 인물임을 확인했습니다.</label>');
+    }
+  }
+  $('form-error').textContent='';
+  $('dialog').showModal();
+}
+$('add').onclick=()=>window.openSpeakerLookup();
+$('close').onclick=$('cancel').onclick=()=>$('dialog').close();
+$('editor').addEventListener('submit',e=>{
+  e.preventDefault();
+  const {kind,row,id}=editor;
+  const data=Object.fromEntries([...new FormData(e.target)].map(([k,v])=>[k,v.trim()]));
+  const err=message=>{$('form-error').textContent=message;};
+  if(!data.title && kind!=='person') return err('강의 주제를 입력하세요.');
+  if(Object.keys(data).filter(k=>['photo','source','yearSource'].includes(k)).some(k=>data[k]&&!url(data[k])))return err('웹 주소는 https:// 또는 http://로 입력하세요.');
+  let next;
+  if(kind==='person'){
+    if(!data.name||!data.role) return err('이름과 소속·직함을 입력하세요.');
+    if(data.year && (+data.year<1900 || +data.year>new Date().getFullYear())) return err('출생연도를 확인하세요.');
+    const duplicate=all().find(x=>x.id!==row?.id && normalize(x.name)===normalize(data.name) && normalize(x.role)===normalize(data.role) && (!x.year || !data.year || x.year===data.year));
+    if(duplicate)return err('같은 이름과 소속·직함의 강사가 있습니다. 기존 프로필을 확인하세요.');
+    next={events:[],reviews:[],...row,...data,photo:data.photo||editor.photo,id:row?.id||uid()};
+    for(const k of ['career','topics']) next[k]=data[k].split('\n').map(s=>s.trim()).filter(Boolean);
+  } else {
+    const key=kind==='event'?'events':'reviews';
+    const entry={id:id||uid(),...data};
+    next={...row,[key]:id?row[key].map(x=>x.id===id?entry:x):[...row[key],entry]};
+  }
+  try{save(next);}catch{return err('브라우저에 저장할 수 없습니다. 저장 공간과 권한을 확인하세요.');}
+  $('dialog').close();
+  selected=next.id;
+  if(!row){search.value='';$('category').value='';tab=0;}
+  categories();drawList();drawDetail();toast('저장했습니다.');
+});
+$('backup').onclick=()=>{
+  const href=URL.createObjectURL(new Blob([JSON.stringify({version:1,changes:changed},null,2)],{type:'application/json'}));
+  const a=document.createElement('a');a.href=href;a.download='speaker-archive-backup.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(href),1000);
+};
+$('restore').onclick=()=>$('upload').click();
+$('upload').onchange=async e=>{
+  const file=e.target.files[0];e.target.value='';
+  if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(data.version!==1||!valid(data.changes))throw Error('invalid');
+    if(!confirm('백업에 포함된 강사의 수정 사항을 불러올까요? 동일한 강사 ID의 현재 기록은 백업 내용으로 교체됩니다.'))return;
+    persist([...new Map([...changed,...data.changes].map(row=>[row.id,row])).values()]);
+    categories();drawList();drawDetail();toast('백업을 불러왔습니다.');
+  }catch{toast('백업을 불러올 수 없습니다. 파일 형식과 저장 공간을 확인하세요.');}
+};
+categories();drawList();drawDetail();
