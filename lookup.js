@@ -165,12 +165,25 @@ window.attachSpeakerPhotos=(fields,state,photoInput)=>{
         if(!readText){status.textContent='강사 사진을 첨부했습니다.';return;}
         status.textContent='이미지에서 한글과 영어를 읽는 중입니다…';
         const tesseract=await loadOCR();
-        worker=await tesseract.createWorker('kor+eng',1,{
-          langPath:'https://cdn.jsdelivr.net/gh/tesseract-ocr/tessdata_fast@main',
-          gzip:false,
-          logger:m=>{if(m.status==='recognizing text')status.textContent='문자 인식 '+Math.round(m.progress*100)+'%';}
+        let timeout;
+        const deadline=new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('OCR timed out')),45000);});
+        const scan=new Promise((resolve,reject)=>{
+          tesseract.createWorker(['kor','eng'],1,{
+            workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/worker.min.js',
+            corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0',
+            langPath:'https://cdn.jsdelivr.net/gh/tesseract-ocr/tessdata_fast@main',
+            gzip:false,
+            errorHandler:reject,
+            logger:m=>{if(m.status==='recognizing text')status.textContent='문자 인식 '+Math.round(m.progress*100)+'%';}
+          }).then(async ready=>{
+            if(!timeout){await ready.terminate();return;}
+            worker=ready;
+            return worker.recognize(file);
+          }).then(resolve,reject);
         });
-        const {data:{text}}=await worker.recognize(file);
+        let text;
+        try { ({data:{text}}=await Promise.race([scan,deadline])); }
+        finally {clearTimeout(timeout);timeout=null;}
         if(!status.isConnected || !$('dialog').open)return;
         if(!text.trim()){status.textContent='읽을 수 있는 글자가 없습니다. 주요 이력을 직접 입력하세요.';return;}
         fillRecognized(text,fields);
