@@ -1516,18 +1516,27 @@ window.SPEAKERS = [
       "-100세 시대, 시간의 판을 바꿔라",
       "-AI시대, 연결의 판을 바꿔라",
       "-불안의 시대, 루틴의 판을 바꿔라",
-      "<꿈으로 성장하고 운명으로 단단해져라>"
+      "<꿈으로 성장하고 운명으로 단단해져라>",
+      "아트스피치",
+      "자기계발과 성장"
     ],
     "career": [
       "現 MKYU 대표 및 강사",
       "現 MKTV(유튜브채널) 대표 크리에이터",
       "現 W-INSIGHTS 대표",
-      "現 사단법인 그루맘 이사장"
+      "現 사단법인 그루맘 이사장",
+      "연세대학교 작곡과 졸업"
     ],
-    "category": "인문학",
+    "category": "인문학, 소통, 리더십, 교육",
     "year": "",
     "events": [],
-    "reviews": []
+    "reviews": [],
+    "sources": [
+      {
+        "label": "추가 공개 프로필 ↗",
+        "url": "https://www.lecturernews.com/news/articleView.html?idxno=108279"
+      }
+    ]
   },
   {
     "id": "pnf-461",
@@ -2201,15 +2210,18 @@ window.SPEAKERS = [
       "역사는 왜 배우는가",
       "영화 속 그때 그 사람-일제 강점기",
       "인문가치를 공유하다",
-      "우리가 주목해야 할 역사의 4장면"
+      "우리가 주목해야 할 역사의 4장면",
+      "한국사"
     ],
     "career": [
       "現 별별한국사 연구소장, 역사 커뮤니케이터",
       "現 사랑의열매 홍보대사",
       "現 재외동포청 홍보대사",
-      "現 국방부 유해발국감식단 홍보대사"
+      "現 국방부 유해발국감식단 홍보대사",
+      "성균관대학교 사학과 졸업",
+      "전 대광고등학교 국사 교사"
     ],
-    "category": "교육",
+    "category": "인문학, 교육",
     "year": "",
     "events": [
       {
@@ -2223,7 +2235,13 @@ window.SPEAKERS = [
         "status": "후기 공개"
       }
     ],
-    "reviews": []
+    "reviews": [],
+    "sources": [
+      {
+        "label": "추가 공개 프로필 ↗",
+        "url": "https://www.lecturernews.com/news/articleView.html?idxno=157579"
+      }
+    ]
   },
   {
     "id": "pnf-2195",
@@ -6618,5 +6636,593 @@ window.SPEAKERS = [
     "year": "",
     "events": [],
     "reviews": []
+  },
+  {
+    "id": "public-116594604ef4037f",
+    "name": "강병찬",
+    "role": "한국강사교육진흥원 교육운영본부장",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "인문학, 리더십, 안전",
+    "topics": [
+      "영화로 배우는 인문학",
+      "동기부여와 소통",
+      "재난 안전"
+    ],
+    "career": [
+      "한국강사교육진흥원 교육운영본부장"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      },
+      {
+        "label": "한국강사편람 ↗",
+        "url": "https://www.yes24.com/product/goods/173933776"
+      }
+    ]
+  },
+  {
+    "id": "public-b390ba814ca94031",
+    "name": "김근아",
+    "role": "무궁화쌤닷컴 숏폼 강사",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "디지털 마케팅, AI·IT",
+    "topics": [
+      "숏츠와 릴스 제작",
+      "캡컷 영상 편집",
+      "AI 기반 숏폼 기획"
+    ],
+    "career": [
+      "무궁화쌤닷컴 숏폼 강사"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-59347f9984ecc970",
+    "name": "김동연",
+    "role": "리본스피치 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "조직문화, 리더십",
+    "topics": [
+      "워크숍 팀빌딩",
+      "레크리에이션"
+    ],
+    "career": [
+      "리본스피치 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      },
+      {
+        "label": "한국강사편람 ↗",
+        "url": "https://www.yes24.com/product/goods/173933776"
+      }
+    ]
+  },
+  {
+    "id": "public-5b454e4181cbf021",
+    "name": "나윤희",
+    "role": "한국강사교육진흥원 수석 연구원",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "교육, 코칭",
+    "topics": [
+      "부모교육",
+      "코칭과 멘토링",
+      "디지털 콘텐츠 제작"
+    ],
+    "career": [
+      "한국강사교육진흥원 수석 연구원"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-987fe786aa77a3cc",
+    "name": "박동숙",
+    "role": "초록사과 인형극단 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "인문학, 예술/문화",
+    "topics": [
+      "그림책과 통합예술",
+      "색채 심리",
+      "퍼스널 브랜딩"
+    ],
+    "career": [
+      "초록사과 인형극단 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-448c393e6a754af9",
+    "name": "박윤희",
+    "role": "윤에듀케이션 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "교육, 리더십, AI·IT",
+    "topics": [
+      "보고서와 공문서 작성",
+      "교수법과 발표",
+      "관리자 리더십",
+      "생성형 AI 활용"
+    ],
+    "career": [
+      "윤에듀케이션 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      },
+      {
+        "label": "오늘의 강사 · 박윤희 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=3038"
+      }
+    ]
+  },
+  {
+    "id": "public-806af379b628c396",
+    "name": "송치수",
+    "role": "더커뮤 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "조직문화, 리더십, 소통",
+    "topics": [
+      "조직 활성화",
+      "직장 갈등 관리",
+      "세대 간 소통",
+      "팀빌딩"
+    ],
+    "career": [
+      "더커뮤 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-79d83457b1c3b47e",
+    "name": "이미루",
+    "role": "한국생산성본부 서부지부 파트너 강사",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "AI·IT, 교육",
+    "topics": [
+      "생성형 AI",
+      "면접과 취업 준비",
+      "커리어 브랜딩"
+    ],
+    "career": [
+      "한국생산성본부 서부지부 파트너 강사"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-67e6e0f6f861c4d2",
+    "name": "이미경",
+    "role": "행복노리터 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "소통, 리더십, 디지털 마케팅",
+    "topics": [
+      "스피치와 커뮤니케이션",
+      "팀빌딩",
+      "콘텐츠 기획"
+    ],
+    "career": [
+      "행복노리터 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-d7ab31f766fa1871",
+    "name": "최근영",
+    "role": "세종나라 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=168468",
+    "category": "교육, 인문학, AI·IT",
+    "topics": [
+      "창의융합 교육",
+      "독서토론",
+      "생성형 AI",
+      "진로와 취업"
+    ],
+    "career": [
+      "세종나라 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "2025 명강사 재게시 ↗",
+        "url": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=2961"
+      }
+    ]
+  },
+  {
+    "id": "public-612d759054105053",
+    "name": "정진수",
+    "role": "감성컴퍼니 대표",
+    "year": "",
+    "photo": "https://cdn.lecturernews.com/news/thumbnail/202609/210416_479810_299_v150.jpg",
+    "source": "https://www.lecturernews.com/news/articleView.html?idxno=210416",
+    "category": "디지털 마케팅, AI·IT",
+    "topics": [
+      "SNS 마케팅",
+      "소상공인 실전 AI"
+    ],
+    "career": [
+      "SNS 마케팅 교육",
+      "실전 AI 및 인스타그램 분야 저술"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": []
+  },
+  {
+    "id": "public-ac53d40db4644e8a",
+    "name": "윤은기",
+    "role": "한국협업발전포럼 회장",
+    "year": "",
+    "photo": "",
+    "source": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=3130",
+    "category": "경영, 리더십",
+    "topics": [
+      "협업경영"
+    ],
+    "career": [
+      "전 중앙공무원교육원장",
+      "전 서울과학종합대학원대학교 총장"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": []
+  },
+  {
+    "id": "public-de0573205e7b3c13",
+    "name": "최주리",
+    "role": "올댓매너연구소 운영",
+    "year": "",
+    "photo": "",
+    "source": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=3130",
+    "category": "비즈니스, 예술/문화",
+    "topics": [
+      "와인 비즈니스 매너",
+      "기업 와인 교육"
+    ],
+    "career": [],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국강사편람 ↗",
+        "url": "https://www.yes24.com/product/goods/173933776"
+      }
+    ]
+  },
+  {
+    "id": "public-495d6453d0b297ff",
+    "name": "박정아",
+    "role": "아이티앤베이직 교육연구소 소장",
+    "year": "",
+    "photo": "",
+    "source": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=3130",
+    "category": "리더십, 조직문화",
+    "topics": [
+      "업무성향 기반 팀빌딩",
+      "조직과 리더십"
+    ],
+    "career": [
+      "심오피스 업무성향검사 개발"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": []
+  },
+  {
+    "id": "public-14218eea1f3555fb",
+    "name": "최재용",
+    "role": "디지털융합교육원 원장",
+    "year": "",
+    "photo": "",
+    "source": "https://m.lectureragency.com/board/free/read.html?board_no=5&no=3130",
+    "category": "AI·IT, 미디어",
+    "topics": [
+      "AI 영상 제작",
+      "생성형 AI 활용"
+    ],
+    "career": [
+      "한국영상제작협회 회장"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국강사편람 ↗",
+        "url": "https://www.yes24.com/product/goods/173933776"
+      }
+    ]
+  },
+  {
+    "id": "public-adb47bb2f2b24e41",
+    "name": "최종택",
+    "role": "초이스인재경영개발원 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://m.lectureragency.com/board/product/read.html?board_no=1002&no=2924",
+    "category": "리더십, 소통, 자기계발",
+    "topics": [
+      "실행 리더십",
+      "커뮤니케이션",
+      "동기부여"
+    ],
+    "career": [],
+    "events": [],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국강사편람 ↗",
+        "url": "https://www.yes24.com/product/goods/173933776"
+      }
+    ]
+  },
+  {
+    "id": "public-9678a9a07806f6f2",
+    "name": "황병일",
+    "role": "한국수면관리협회 협회장",
+    "year": "",
+    "photo": "",
+    "source": "https://korsma.org/0301/?bmode=view&idx=164137096",
+    "category": "건강, 라이프",
+    "topics": [
+      "수면 건강",
+      "수면 코칭"
+    ],
+    "career": [
+      "네이처슬립 수면코칭연구소 대표"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": []
+  },
+  {
+    "id": "public-24bda4be1a29f70c",
+    "name": "박정용",
+    "role": "로아메리카 미국변호사",
+    "year": "",
+    "photo": "",
+    "source": "https://biz.chosun.com/industry/industry_general/2025/09/10/JINSGOUH6NEBHKBQFPXHJXWCSY/",
+    "category": "인사·노무, 글로벌 HR",
+    "topics": [
+      "해외주재원 파견 프로세스",
+      "미국 법인 법률 리스크 대응"
+    ],
+    "career": [],
+    "events": [
+      {
+        "title": "해외주재원 인사관리 및 육성 세미나 · 미국 파견과 현지 법률 리스크",
+        "date": "2025-09-16",
+        "place": "",
+        "source": "https://biz.chosun.com/industry/industry_general/2025/09/10/JINSGOUH6NEBHKBQFPXHJXWCSY/",
+        "status": "행사 공지",
+        "host": "한국인사관리협회",
+        "id": "event-703a65790462b637"
+      }
+    ],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국인사관리협회 공개강좌 ↗",
+        "url": "https://insabank.com/seminar"
+      }
+    ]
+  },
+  {
+    "id": "public-1e9a4d4343e90a60",
+    "name": "박지은",
+    "role": "로아메리카 미국변호사",
+    "year": "",
+    "photo": "",
+    "source": "https://biz.chosun.com/industry/industry_general/2025/09/10/JINSGOUH6NEBHKBQFPXHJXWCSY/",
+    "category": "인사·노무, 글로벌 HR",
+    "topics": [
+      "해외주재원 파견 프로세스",
+      "미국 법인 법률 리스크 대응"
+    ],
+    "career": [],
+    "events": [
+      {
+        "title": "해외주재원 인사관리 및 육성 세미나 · 미국 파견과 현지 법률 리스크",
+        "date": "2025-09-16",
+        "place": "",
+        "source": "https://biz.chosun.com/industry/industry_general/2025/09/10/JINSGOUH6NEBHKBQFPXHJXWCSY/",
+        "status": "행사 공지",
+        "host": "한국인사관리협회",
+        "id": "event-8499c8d212a7e478"
+      }
+    ],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국인사관리협회 공개강좌 ↗",
+        "url": "https://insabank.com/seminar"
+      }
+    ]
+  },
+  {
+    "id": "public-1e3f7789bb6c26e2",
+    "name": "류랑도",
+    "role": "더퍼포먼스 대표",
+    "year": "",
+    "photo": "",
+    "source": "https://www.hankyung.com/article/2014110390981",
+    "category": "인사·노무, 리더십",
+    "topics": [
+      "성과를 높이는 성과관리 시스템"
+    ],
+    "career": [
+      "더퍼포먼스 대표"
+    ],
+    "events": [
+      {
+        "title": "성과를 높이는 성과관리 시스템",
+        "date": "2014-10-29",
+        "place": "더플라자호텔 22층 루비홀",
+        "source": "https://www.hankyung.com/article/2014110390981",
+        "status": "개최 확인",
+        "host": "한국인사관리협회",
+        "id": "event-4080b9b51d54fac1"
+      }
+    ],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국인사관리협회 공개강좌 ↗",
+        "url": "https://insabank.com/seminar"
+      }
+    ]
+  },
+  {
+    "id": "public-6bc4520f07afef58",
+    "name": "정재정",
+    "role": "서울시립대 교수 (강연 당시)",
+    "year": "",
+    "photo": "",
+    "source": "https://www.hankyung.com/article/2014110390981",
+    "category": "인문학, 국제관계",
+    "topics": [
+      "한일 역사분쟁과 대응"
+    ],
+    "career": [
+      "서울시립대 교수 (강연 당시)"
+    ],
+    "events": [
+      {
+        "title": "한일 역사분쟁과 대응",
+        "date": "2014-10-29",
+        "place": "더플라자호텔 22층 루비홀",
+        "source": "https://www.hankyung.com/article/2014110390981",
+        "status": "개최 확인",
+        "host": "한국인사관리협회",
+        "id": "event-f4419fa1150ff544"
+      }
+    ],
+    "reviews": [],
+    "sources": [
+      {
+        "label": "한국인사관리협회 공개강좌 ↗",
+        "url": "https://insabank.com/seminar"
+      }
+    ]
+  },
+  {
+    "id": "public-ce65d31821e550f5",
+    "name": "용순덕",
+    "role": "법무법인 대륙아주 파트너 변호사",
+    "year": "",
+    "photo": "",
+    "source": "https://www.draju.com/ko/sub/people.html?laNo=161&sT=1&type=view",
+    "category": "인사·노무, 법률",
+    "topics": [
+      "노동법과 근로시간",
+      "개별근로관계 분쟁"
+    ],
+    "career": [
+      "2018년 한국인사관리협회 기업 인사담당자 교육"
+    ],
+    "events": [
+      {
+        "title": "근로시간 단축과 근로기준법 개정 대응",
+        "date": "",
+        "place": "",
+        "source": "https://www.draju.com/ko/sub/people.html?laNo=161&sT=1&type=view",
+        "status": "출강 이력 확인",
+        "host": "한국인사관리협회",
+        "id": "event-006031f749d139ed"
+      }
+    ],
+    "reviews": [],
+    "sources": []
+  },
+  {
+    "id": "public-8a22bd10d144bad1",
+    "name": "박현웅",
+    "role": "공인노무사",
+    "year": "",
+    "photo": "",
+    "source": "https://nurilabor.com/28",
+    "category": "인사·노무, 교육",
+    "topics": [
+      "개별·집단적 노동관계",
+      "직장 내 괴롭힘과 성희롱 예방"
+    ],
+    "career": [
+      "공개 프로필에 한국인사관리협회 출강 기관으로 기재"
+    ],
+    "events": [],
+    "reviews": [],
+    "sources": []
   }
 ];

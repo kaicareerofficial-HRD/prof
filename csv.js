@@ -65,6 +65,7 @@ function csvDrafts(text, existing) {
     const id=previous?.id || uid();
     if(drafts.has(id))fail('같은 강사가 파일에 두 번 포함되었습니다.');
     delete fields.id;
+    if('category' in fields)fields.category=categoryList(fields).join(', ');
     for(const field of ['career','topics'])if(field in fields)fields[field]=fields[field].split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     if(previous?.photo.startsWith('data:') && fields.photo==='')delete fields.photo;
     const next={role:'',category:'',year:'',photo:'',source:'',career:[],topics:[],events:[],reviews:[],...previous,...fields,id};
