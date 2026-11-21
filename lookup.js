@@ -130,7 +130,7 @@ function fillRecognized(text,fields) {
   let section='career';
   const output={career:[],topics:[]};
   for(const line of entries){
-    if(/^(?:성명|이름|강사명|소속|직함|출생|생년월일)\s*[:：]/.test(line))continue;
+    if(/^(?:성명|이름|강사명|소속|직함|출생(?:연도)?|생년월일)\s*[:：]/.test(line))continue;
     const heading=line.match(/^(주요\s*이력|경력|학력|강의\s*(?:내용|주제)|강연\s*(?:내용|주제))\s*[:：]?\s*(.*)$/);
     if(heading){section=/^강/.test(heading[1])?'topics':'career';if(heading[2])output[section].push(heading[2]);}
     else output[section].push(line);
@@ -166,7 +166,8 @@ window.attachSpeakerPhotos=(fields,state,photoInput)=>{
         status.textContent='이미지에서 한글과 영어를 읽는 중입니다…';
         const tesseract=await loadOCR();
         worker=await tesseract.createWorker('kor+eng',1,{
-          langPath:'https://tessdata.projectnaptha.com/4.0.0_best_int',
+          langPath:'https://cdn.jsdelivr.net/gh/tesseract-ocr/tessdata_fast@main',
+          gzip:false,
           logger:m=>{if(m.status==='recognizing text')status.textContent='문자 인식 '+Math.round(m.progress*100)+'%';}
         });
         const {data:{text}}=await worker.recognize(file);
